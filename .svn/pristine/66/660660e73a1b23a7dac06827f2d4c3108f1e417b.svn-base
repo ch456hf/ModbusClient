@@ -1,0 +1,39 @@
+#include <iostream>
+#include "MBDevTable.h"
+#include "ModBusClient.h"
+#include <pthread.h>
+
+using namespace std;
+
+void print(string str)
+{
+    hash_map<string,ModBus_Node_ptr> ModBusDevTable = MBDevTable::GetInstance()->ModBusDevTable;
+    hash_map<string,ModBus_Node_ptr>::iterator iterMBDevTable = ModBusDevTable.find(str);
+    ModBus_Node_ptr node_ptr = iterMBDevTable->second;
+    for(;node_ptr != NULL;node_ptr = node_ptr->next)
+    {
+        cout << "channel = " << node_ptr->channel << "addr = " << node_ptr->addr << "type = " << node_ptr->type << endl;
+    }
+}
+
+int main()
+{
+    ModBusClient *modbusclient = new ModBusClient();
+    MBDevTable *mbdevtable = MBDevTable::GetInstance();
+    unsigned char data[8];
+    data[0] = 0x12;
+    data[1] = 0x34;
+    data[2] = 0x56;
+    data[3] = 0x78;
+    data[4] = 0x13;
+    data[5] = 0x57;
+    data[6] = 0x00;
+    data[7] = 0x68;
+    mbdevtable->ConfigTable("1E33",2,100,AI);
+    mbdevtable->ConfigTable("1E33",1,160,AI);
+    mbdevtable->ConfigTable("1E33",4,130,AI);
+    mbdevtable->ConfigTable("1E33",3,140,AI);
+    print("1E33");
+    modbusclient->SendToMB("1E33",8,data);
+    return 0;
+}
