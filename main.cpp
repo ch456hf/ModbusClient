@@ -1,5 +1,6 @@
 #include <iostream>
 #include <pthread.h>
+#include <stdio.h>
 #include "MBDevTable.h"
 #include "ModBusClient.h"
 #include "MBCtrlTable.h"
